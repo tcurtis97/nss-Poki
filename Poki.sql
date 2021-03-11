@@ -3,7 +3,7 @@ SELECT	* FROM Grade
 
 
 --2.What emotions may be associated with a poem?
-SELECT	* FROM Emotion
+SELECT	* FROM emotion
 
 
 --3.How many poems are in the database?
@@ -102,4 +102,44 @@ GROUP BY e.Name, e.id
 HAVING e.Id = 3
 
 
---17.
+--17.How many poems are not associated with any emotion?
+SELECT COUNT(p.Id) as #
+FROM Poem p
+LEFT JOIN PoemEmotion pe ON p.Id = pe.PoemId
+	LEFT JOIN Emotion e ON pe.EmotionId = e.id
+WHERE e.Id IS NULL
+
+
+--18.Which emotion is associated with the least number of poems?
+SELECT top 1 COUNT(p.id) as #, e.Name AS emotion
+FROM Poem p
+LEFT JOIN PoemEmotion pe ON p.Id = pe.PoemId
+	LEFT JOIN Emotion e ON pe.EmotionId = e.id
+GROUP BY e.Name, e.id
+HAVING e.Name IS NOT NULL
+ORDER BY COUNT(p.id) ASC
+
+
+--19.Which grade has the largest number of poems with an emotion of joy?
+SELECT top 1 COUNT(p.id) as #, e.Name AS emotion
+FROM Poem p
+LEFT JOIN PoemEmotion pe ON p.Id = pe.PoemId
+	LEFT JOIN Emotion e ON pe.EmotionId = e.Id
+	left join Author a on a.Id = p.authorId 
+	left join Grade g on g.Id = a.GradeId
+	GROUP BY e.Name, e.id, g.name
+HAVING e.Name IS NOT NULL and e.id = 4
+ORDER BY COUNT(p.id) ASC
+
+
+--20.Which gender has the least number of poems with an emotion of fear?
+SELECT top 1 COUNT(p.id) as #, ge.Name AS gender
+FROM Poem p
+LEFT JOIN PoemEmotion pe ON p.Id = pe.PoemId
+	LEFT JOIN Emotion e ON pe.EmotionId = e.Id
+	left join Author a on a.Id = p.authorId 
+	left join Gender ge on ge.Id = a.GenderId
+	GROUP BY e.Name, e.id, ge.name
+HAVING e.Name IS NOT NULL and e.id = 2
+ORDER BY COUNT(p.id) ASC
+
